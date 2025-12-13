@@ -8,3 +8,6 @@ spring:
       credentials:
         access-key: test
         secret-key: test
+
+server:
+  port: 8080
