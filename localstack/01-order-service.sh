@@ -1,41 +1,17 @@
 #!/bin/bash
 set -e
 
-QUEUE_URL=$(awslocal sqs create-queue \
-  --queue-name pedidos-queue \
-  --query 'QueueUrl' \
-  --output text)
+awslocal sqs create-queue \
+  --queue-name pedidos-queue
 
-QUEUE_ARN=$(awslocal sqs get-queue-attributes \
-  --queue-url $QUEUE_URL \
-  --attribute-names QueueArn \
-  --query 'Attributes.QueueArn' \
-  --output text)
-
-TOPIC_ARN=$(awslocal sns create-topic \
-  --name pedidos-topic \
-  --query 'TopicArn' \
-  --output text)
+awslocal sns create-topic \
+  --name pedidos-topic
 
 awslocal sqs set-queue-attributes \
-  --queue-url $QUEUE_URL \
-  --attributes "{
-    \"Policy\": \"{
-      \\\"Version\\\": \\\"2012-10-17\\\",
-      \\\"Statement\\\": [{
-        \\\"Effect\\\": \\\"Allow\\\",
-        \\\"Principal\\\": {\\\"Service\\\": \\\"sns.amazonaws.com\\\"},
-        \\\"Action\\\": \\\"sqs:SendMessage\\\",
-        \\\"Resource\\\": \\\"$QUEUE_ARN\\\",
-        \\\"Condition\\\": {
-          \\\"ArnEquals\\\": {\\\"aws:SourceArn\\\": \\\"$TOPIC_ARN\\\"}
-        }
-      }]
-    }\"
-  }"
+  --queue-url http://localhost:4566/000000000000/pedidos-queue \
+  --attributes '{"Policy":"{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"sns.amazonaws.com\"},\"Action\":\"sqs:SendMessage\",\"Resource\":\"arn:aws:sqs:us-east-1:000000000000:pedidos-queue\",\"Condition\":{\"ArnEquals\":{\"aws:SourceArn\":\"arn:aws:sns:us-east-1:000000000000:pedidos-topic\"}}}]}"}'
 
 awslocal sns subscribe \
-  --topic-arn $TOPIC_ARN \
+  --topic-arn arn:aws:sns:us-east-1:000000000000:pedidos-topic \
   --protocol sqs \
-  --notification-endpoint $QUEUE_ARN
-
+  --notification-endpoint arn:aws:sqs:us-east-1:000000000000:pedidos-queue

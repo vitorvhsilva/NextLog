@@ -12,4 +12,4 @@ services:
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
     volumes:
-      - ./localstack/scripts:/etc/localstack/init/ready.d
+      - ./localstack:/etc/localstack/init/ready.d
