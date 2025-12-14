@@ -13,3 +13,25 @@ services:
       - AWS_SECRET_ACCESS_KEY=test
     volumes:
       - ./localstack:/etc/localstack/init/ready.d
+
+  postgres-products:
+    image: postgres:16
+    container_name: postgres-products
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: products
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  postgres-delivery-man:
+    image: postgres:16
+    container_name: postgres-delivery-man
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: delivery_man
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./postgres/delivery-man-init.sql:/docker-entrypoint-initdb.d/init.sql
