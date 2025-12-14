@@ -8,7 +8,7 @@ CREATE TABLE delivery_man (
 CREATE TABLE working_schedule (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     delivery_man_id UUID NOT NULL,
-    dia VARCHAR(10) NOT NULL,
+    dia DATE NOT NULL,
     horario_entrada TIME NOT NULL,
     horario_saida   TIME NOT NULL,
 
